@@ -157,6 +157,7 @@ def convert_msg_to_json(msg):
     if tornado.options.options.index_bodies:
         result['body'] = ''
         parse_message_parts(msg)
+    if tornado.options.options.index_bodies or tornado.options.options.index_body_size:
         result['body_size'] = len(result['body'])
 
     parts = result.get("parts", [])
@@ -234,9 +235,13 @@ if __name__ == '__main__':
     tornado.options.define("num_of_shards", type=int, default=2,
                            help="Number of shards for ES index")
 
+    tornado.options.define("index_body_size", type=bool, default=True,
+                           help="Will index the sum of all body content as 'body_size'")
+
     tornado.options.define("index_bodies", type=bool, default=True,
-                           help="Will index all body content, stripped of HTML/CSS/JS etc. Adds fields: 'body' and \
-                                    'body_size'")
+                           help="Will index all body content, stripped of HTML/CSS/JS etc. Adds field: 'body' and \
+                                    enables --index-body-size")
+
 
     tornado.options.define("text_only", type=bool, default=False,
                            help='Only parse message body multiparts declared as text (ignoring images etc.).')
